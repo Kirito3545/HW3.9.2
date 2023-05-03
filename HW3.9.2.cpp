@@ -1,20 +1,202 @@
-﻿// HW3.9.2.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
-//
+﻿#include <iostream>
+#include <cmath>
 
-#include <iostream>
+class Fraction
+{
+private:
+	int numerator_ = 0;
+	int denominator_ = 0;
+
+	int NOD(int numerator, int denominator)
+	{
+		numerator = abs(numerator);
+		denominator = abs(denominator);
+
+		while (numerator > 0 && denominator > 0)
+
+			if (numerator > denominator)
+				numerator %= denominator;
+
+			else
+				denominator %= numerator;
+
+		return numerator + denominator;
+	}
+
+public:
+	Fraction() = default;
+	Fraction(int numerator, int denominator)
+	{
+		numerator_ = numerator;
+		denominator_ = denominator;
+	}
+
+	Fraction operator + (const Fraction& other)
+	{
+		Fraction temp;
+
+		temp.numerator_ = ((this->numerator_ * other.denominator_) + (other.numerator_ * this->denominator_));
+		temp.denominator_ = (this->denominator_ * other.denominator_);
+
+		int nod = NOD(temp.numerator_, temp.denominator_);
+
+		temp.numerator_ = temp.numerator_ / nod;
+		temp.denominator_ = temp.denominator_ / nod;
+
+		return temp;
+	}
+
+	Fraction operator - (const Fraction& other)
+	{
+		Fraction temp;
+
+		temp.numerator_ = ((this->numerator_ * other.denominator_) - (other.numerator_ * this->denominator_));
+		temp.denominator_ = (this->denominator_ * other.denominator_);
+
+		int nod = NOD(temp.numerator_, temp.denominator_);
+
+		temp.numerator_ = temp.numerator_ / nod;
+		temp.denominator_ = temp.denominator_ / nod;
+
+		return temp;
+	}
+
+	Fraction operator * (const Fraction& other)
+	{
+		Fraction temp;
+
+		temp.numerator_ = this->numerator_ * other.numerator_;
+		temp.denominator_ = this->denominator_ * other.denominator_;
+
+		int nod = NOD(temp.numerator_, temp.denominator_);
+
+		temp.numerator_ = temp.numerator_ / nod;
+		temp.denominator_ = temp.denominator_ / nod;
+
+		return temp;
+	}
+
+	Fraction operator / (const Fraction& other)
+	{
+		Fraction temp;
+
+		temp.numerator_ = this->numerator_ * other.denominator_;
+		temp.denominator_ = this->denominator_ * other.numerator_;
+
+		int nod = NOD(temp.numerator_, temp.denominator_);
+
+		temp.numerator_ = temp.numerator_ / nod;
+		temp.denominator_ = temp.denominator_ / nod;
+
+		return temp;
+	}
+
+	Fraction& operator++ ()
+	{
+		this->numerator_ = this->numerator_ + this->denominator_;
+
+		int nod = NOD(this->numerator_, this->denominator_);
+
+		this->numerator_ = this->numerator_ / nod;
+		this->denominator_ = this->denominator_ / nod;
+
+		return *this;
+	}
+
+	Fraction operator++ (int)
+	{
+		Fraction temp = *this;
+
+		this->numerator_ = this->numerator_ + this->denominator_;
+
+		int nod = NOD(this->numerator_, this->denominator_);
+
+		this->numerator_ = this->numerator_ / nod;
+		this->denominator_ = this->denominator_ / nod;
+
+		return temp;
+	}
+
+	Fraction& operator-- ()
+	{
+		this->numerator_ = this->numerator_ - this->denominator_;
+
+		int nod = NOD(this->numerator_, this->denominator_);
+
+		this->numerator_ = this->numerator_ / nod;
+		this->denominator_ = this->denominator_ / nod;
+
+		return *this;
+	}
+
+	Fraction operator-- (int)
+	{
+		Fraction temp = *this;
+
+		//++(*this);
+		this->numerator_ = this->numerator_ - this->denominator_;
+
+		int nod = NOD(this->numerator_, this->denominator_);
+
+		this->numerator_ = this->numerator_ / nod;
+		this->denominator_ = this->denominator_ / nod;
+
+		return temp;
+	}
+
+	friend std::ostream& operator << (std::ostream& os, const Fraction& fra);
+};
+
+std::ostream& operator << (std::ostream& os, const Fraction& fra)
+{
+	if (fra.denominator_ == 1)
+		os << fra.numerator_;
+	else
+		os << fra.numerator_ << "/" << fra.denominator_;
+
+	return os;
+}
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	setlocale(LC_ALL, "Russian");
+	system("chcp 1251");
+	std::cout << std::endl;
+
+	int numerator1 = 3;
+	int denominator1 = 4;
+	int numerator2 = 4;
+	int denominator2 = 5;
+
+	std::cout << "Введите числитель дроби 1: ";
+	std::cin >> numerator1;
+	std::cout << "Введите знаменатель дроби 1: ";
+	std::cin >> denominator1;
+
+	std::cout << "Введите числитель дроби 2: ";
+	std::cin >> numerator2;
+	std::cout << "Введите знаменатель дроби 2: ";
+	std::cin >> denominator2;
+
+	Fraction f1(numerator1, denominator1);
+	Fraction f2(numerator2, denominator2);
+
+	std::cout << f1 << " + " << f2 << " = " << f1 + f2 << std::endl;
+	std::cout << f1 << " - " << f2 << " = " << f1 - f2 << std::endl;
+	std::cout << f1 << " * " << f2 << " = " << f1 * f2 << std::endl;
+	std::cout << f1 << " / " << f2 << " = " << f1 / f2 << std::endl;
+	std::cout << "----------------------------" << std::endl;
+
+	std::cout << "++f1 = " << ++f1 << " * " << f2 << " = " << f1 * f2 << std::endl;
+	std::cout << "--f1 = " << --f1 << " * " << f2 << " = " << f1 * f2 << std::endl;
+	std::cout << "f1 = " << f1 << std::endl;
+	std::cout << "----------------------------" << std::endl;
+
+	std::cout << "f2++ = " << f1 << " * " << ++f2 << " = " << f1 * f2 << std::endl;
+	std::cout << "f2-- = " << f1 << " * " << f2-- << " = " << f1 * f2 << std::endl;
+	std::cout << "f2-- = " << f1 << " * " << f2-- << " = " << f1 * f2 << std::endl;
+	std::cout << "f2 = " << f2 << std::endl;
+	std::cout << "----------------------------" << std::endl;
+
+	return 0;
 }
-
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
